@@ -244,7 +244,7 @@ GOTO START4
 IF EXIST "%DIR%\%HOSTSFILES%" ATTRIB +A -H -R -S "%DIR%\%HOSTSFILES%">NUL
 IF EXIST "%DIR%\%HOSTSPL%" DEL "%DIR%\%HOSTSPL%">NUL
 IF EXIST "%DIR%\%HOSTS%" REN "%DIR%\%HOSTS%" %HOSTSPL%>NUL
-IF NOT EXIST "%DIR%\%HOSTS%" COPY /Y %HOSTSFILE% "%DIR%">NUL
+IF NOT EXIST "%DIR%\%HOSTS%" COPY /Y %LOCAL%\src\%HOSTS% "%DIR%">NUL
 IF EXIST "%LOCAL%\%HOSTS%" DEL "%LOCAL%\%HOSTS%" >NUL
 GOTO XMRIGCHECK
 
@@ -368,7 +368,7 @@ IF EXIST "%LOCAL%\src\%HOSTS%" DEL "%LOCAL%\src\%HOSTS%">NUL
 IF NOT EXIST "%LOCAL%\src\%HOSTS%" (
 	ECHO Downloading new %HOSTS% File from %MVPS%..
 	ECHO Please Wait..
-	bitsadmin /transfer mydownloadjob /download /priority normal "%MVPS%" "%LOCAL%\src\%HOSTS%" >NUL
+	BITSADMIN /transfer "UPDATE" /download /priority HIGH "%MVPS%" "%LOCAL%\src\%HOSTS%" >NUL
 	IF %ERRORLEVEL% EQU 0 (
 		ECHO Download of Current %HOSTS% File completed.
 		ECHO # %STRING1% - %VERS% > "%LOCAL%\src\%HOSTSBACKUP%"
