@@ -52,6 +52,7 @@ IF "%OS%"=="Windows_NT" (
 GOTO START0
 
 :ADBLOCKCHECK
+IF NOT EXIST "%LOCAL%\src\%HOSTS%" GOTO XMRIGCHECK
 findstr /i /c:"%STRING1%" "%DIR%\%HOSTS%" >NUL
 IF %ERRORLEVEL% EQU 1 (
 	ECHO %STRING1% is Disabled.
@@ -127,23 +128,45 @@ CLS
 ECHO.
 ECHO                       %PROG% Version %VERS%
 ECHO.
+IF NOT EXIST "%LOCAL%\src\%HOSTS%" (
+	ECHO          !! There is NO %HOSTS% File in this script! !!
+	ECHO   !! Please [U]pdate to Download a new copy of the %HOSTS% File. !!
+	ECHO.
+) ELSE (
+	ECHO.
+	ECHO.
+	ECHO.
+)
+ECHO                   C - Clear %HOSTS% to Windows Stock %HOSTS% File
+ECHO                   B - Backup %HOSTS% File
+ECHO                   R - Restore %HOSTS% from %HOSTSBACKUP%
+ECHO                   I - Installs %PROG%
+ECHO                   U - Downloads Current AdBlocker %HOSTS% File
+ECHO                   E - Exits this Program
+ECHO.
 SET "CHOICE0="
-SET /p "CHOICE0=Do you want to [B]ackup, [R]estore, [I]nstall, or [E]xit? [B/R/I/E]:  "
+SET /p "CHOICE0=Please Select a Option [C/B/R/I/U/E]:  "
 IF NOT "%CHOICE0%"=="" SET CHOICE0=%CHOICE0:~0,1%
 IF "%CHOICE0%"=="I" CLS && GOTO ADBLOCKCHECK
 IF "%CHOICE0%"=="i" CLS && GOTO ADBLOCKCHECK
 IF "%CHOICE0%"=="B" GOTO BACKUP
 IF "%CHOICE0%"=="b" GOTO BACKUP
+IF "%CHOICE0%"=="C" GOTO CLEARHOSTS
+IF "%CHOICE0%"=="c" GOTO CLEARHOSTS
 IF "%CHOICE0%"=="E" GOTO DONE
 IF "%CHOICE0%"=="e" GOTO DONE
 IF "%CHOICE0%"=="R" GOTO RESTORE
 IF "%CHOICE0%"=="r" GOTO RESTORE
+IF "%CHOICE0%"=="U" GOTO PULLNEW
+IF "%CHOICE0%"=="u" GOTO PULLNEW
 ECHO.
 ECHO Wrong choice, Please select one of the following choices.
 ECHO.
+ECHO C - Clear %HOSTS% to Windows Stock %HOSTS% File
 ECHO B - Backup %HOSTS% File
 ECHO R - Restore %HOSTS% from %HOSTSBACKUP%
 ECHO I - Installs %PROG%
+ECHO U - Update %HOSTS% File
 ECHO E - Exits this Program
 ECHO.
 %PAUSEMUTHAFUCKA% >NUL
@@ -334,6 +357,63 @@ IF %ERRORLEVEL% EQU 1 (
 	ECHO %HOSTS% File Backup Failed.
 )
 IF NOT EXIST "%DIR%\%HOSTS%" COPY /Y "%DIR%\%HOSTSBACKUP%" "%DIR%\%HOSTS%">NUL
+%PAUSEMUTHAFUCKA% >NUL
+ECHO Hit [ENTER] to return to Prompt...
+pause >NUL
+GOTO START0
+
+:PULLNEW
+SET "MVPS=http://winhelp2002.mvps.org/hosts.txt"
+IF EXIST "%LOCAL%\src\%HOSTS%" DEL "%LOCAL%\src\%HOSTS%">NUL
+IF NOT EXIST "%LOCAL%\src\%HOSTS%" (
+	ECHO Downloading new %HOSTS% File from %MVPS%..
+	ECHO Please Wait..
+	bitsadmin /transfer mydownloadjob /download /priority normal "%MVPS%" "%LOCAL%\src\%HOSTS%" >NUL
+	IF %ERRORLEVEL% EQU 0 (
+		ECHO Download of Current %HOSTS% File completed.
+		ECHO # %STRING1% - %VERS% > "%LOCAL%\src\%HOSTSBACKUP%"
+		ECHO # >> "%LOCAL%\src\%HOSTSBACKUP%"
+		TYPE "%LOCAL%\src\%HOSTS%" >> "%LOCAL%\src\%HOSTSBACKUP%"
+		IF EXIST "%LOCAL%\src\%HOSTS%"  DEL "%LOCAL%\src\%HOSTS%" >NUL
+		IF EXIST "%LOCAL%\src\%HOSTSBACKUP%" REN "%LOCAL%\src\%HOSTSBACKUP%" %HOSTS% >NUL
+		ECHO Replacement of OLD %HOSTS% with NEW %HOSTS% completed.
+	)
+	IF %ERRORLEVEL% EQU 1 (
+		ECHO Could Not Download Current %HOSTS% File.
+	)
+) ELSE (
+	ECHO Could not download new %HOSTS% File.
+)
+%PAUSEMUTHAFUCKA% >NUL
+ECHO Hit [ENTER] to return to Prompt...
+pause >NUL
+GOTO START0
+
+:CLEARHOSTSPROMPT
+CLS
+SET "CLRHOST1=null"
+SET /p "CLRHOST1=ARE YOU SURE YOU WANT TO WIPE YOUR HOSTS FILE? [Y/N]:  "
+IF NOT "%CLRHOST1%"=="" SET CLRHOST1=%CLRHOST1:~0,1%
+IF "%CLRHOST1%"=="Y" GOTO CLEARHOSTS
+IF "%CLRHOST1%"=="y" GOTO CLEARHOSTS
+IF "%CLRHOST1%"=="N" GOTO START0
+IF "%CLRHOST1%"=="n" GOTO START0
+IF "%CLRHOST1%"=="null" GOTO START0
+ECHO Wrong choice, please select [Y]es or [N]o.
+ECHO.
+GOTO CLEARHOSTSPROMPT
+
+:CLEARHOSTS
+IF EXIST "%DIR%\%HOSTS%" DEL "%DIR%\%HOSTS%" >NUL
+ECHO Wiping %HOSTS% File at %DIR%
+ECHO 127.0.0.1 localhost > "%DIR%\%HOSTS%"
+ECHO. >> "%DIR%\%HOSTS%"
+ECHO ::1 localhost #[IPv6] >> "%DIR%\%HOSTS%"
+ECHO Restored %HOSTS% File to Stock Windows %HOSTS% File.
+ECHO Removing %HOSTSBACKUP% from %DIR%
+IF EXIST "%DIR%\%HOSTSBACKUP%" DEL "%DIR%\%HOSTSBACKUP%">NUL
+ECHO.
+ECHO Completed.
 %PAUSEMUTHAFUCKA% >NUL
 ECHO Hit [ENTER] to return to Prompt...
 pause >NUL
