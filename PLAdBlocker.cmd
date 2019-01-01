@@ -1,6 +1,6 @@
 @ECHO OFF
 IF NOT "%1"=="am_admin" (powershell start -verb runas '%0' am_admin & exit /b)
-SET "VERS=2.2"
+SET "VERS=2.3"
 SET "PROG=PLAdBlocker"
 mode con:cols=80 lines=26
 TITLE %PROG% - %VERS%
@@ -412,6 +412,8 @@ ECHO ::1 localhost #[IPv6] >> "%DIR%\%HOSTS%"
 ECHO Restored %HOSTS% File to Stock Windows %HOSTS% File.
 ECHO Removing %HOSTSBACKUP% from %DIR%
 IF EXIST "%DIR%\%HOSTSBACKUP%" DEL "%DIR%\%HOSTSBACKUP%">NUL
+ECHO Removing %HOSTSPL% from %DIR%
+IF EXIST "%DIR%\%HOSTSPL%" DEL "%DIR%\%HOSTSPL%">NUL
 ECHO.
 ECHO Completed.
 %PAUSEMUTHAFUCKA% >NUL
