@@ -22,6 +22,8 @@ Installation Instructions:
    " !! There is NO HOSTS File in this script! !!
   !! Please [U]pdate to Download a new copy of the HOSTS File. !! ", Press u and hit Enter.
    - After that process is done, Press i to "Install PLAdBlocker" and follow the prompts.
+
+6. Restart your PC and ENJOY!  
 ```
 
 PLAdBlocker Blocks these Dev Fee's:
