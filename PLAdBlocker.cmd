@@ -1,6 +1,6 @@
 @ECHO OFF
 IF NOT "%1"=="am_admin" (powershell start -verb runas '%0' am_admin & exit /b)
-SET "VERS=2.3"
+SET "VERS=2.4c"
 SET "PROG=PLAdBlocker"
 mode con:cols=80 lines=26
 TITLE %PROG% - %VERS%
